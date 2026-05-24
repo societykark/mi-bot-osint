@@ -3,8 +3,7 @@ import requests
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-# ⚠️ PON AQUÍ TU NUEVO TOKEN (revoca el viejo y créalo con @BotFather)
-TOKEN = '8830759236:AAEK_kVmhJnNTUdbZtFSFI8JYfzMNkOx-Bk'
+TOKEN = '8830759236:AAEK_kVmhJnNTUdbZtFSFI8JYfzMNkOx-Bk'  # Pon tu token nuevo (revoca el viejo)
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
