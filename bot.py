@@ -1,12 +1,10 @@
 import logging
 import requests
-import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-TOKEN = os.getenv('BOT_TOKEN')
-if not TOKEN:
-    raise ValueError("BOT_TOKEN no está configurado")
+# ⚠️ PON AQUÍ TU NUEVO TOKEN (revoca el viejo y créalo con @BotFather)
+TOKEN = '8830759236:AAEK_kVmhJnNTUdbZtFSFI8JYfzMNkOx-Bk'
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -31,7 +29,7 @@ async def username(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Uso: /username <nombre>")
         return
     user = context.args[0]
-    await update.message.reply_text(f"Buscando '{user}'...")
+    await update.message.reply_text(f"🔍 Buscando '{user}'...")
     resultado = await search_username(user)
     await update.message.reply_text(resultado[:4000])
 
