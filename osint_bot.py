@@ -8,7 +8,6 @@ import json
 import os
 
 # ================= CONFIGURACIÓN =================
-# Todas las claves se leen de variables de entorno (SEGURO)
 TOKEN = os.environ.get('TOKEN')
 if not TOKEN:
     raise ValueError("❌ La variable de entorno TOKEN no está configurada.")
@@ -20,7 +19,6 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 # ================= FUNCIÓN PARA BUSCAR USUARIO (SHERLOCK) =================
 async def search_username(username: str) -> str:
     try:
-        # Ejecutar Sherlock y guardar resultado en JSON
         result = subprocess.run(
             ["sherlock", username, "--output", "json"],
             capture_output=True,
