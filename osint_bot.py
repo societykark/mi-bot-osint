@@ -6,15 +6,31 @@ import re
 import subprocess
 import json
 import os
+import threading
+from flask import Flask, request
 
 # ================= CONFIGURACIÓN =================
 TOKEN = os.environ.get('TOKEN')
 if not TOKEN:
-    raise ValueError("❌ La variable de entorno TOKEN no está configurada.")
+    raise ValueError("❌ TOKEN no configurado")
 
 NUMVERIFY_KEY = os.environ.get('NUMVERIFY_KEY', '')
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+# ================= SERVIDOR WEB PARA HEALTH CHECK =================
+app_flask = Flask(__name__)
+
+@app_flask.route('/')
+def health():
+    return "OK", 200
+
+@app_flask.route('/health')
+def health_check():
+    return "OK", 200
+
+def run_flask():
+    app_flask.run(host='0.0.0.0', port=3000)
 
 # ================= FUNCIÓN PARA BUSCAR USUARIO (SHERLOCK) =================
 async def search_username(username: str) -> str:
@@ -90,7 +106,7 @@ $ root@system: Access Granted ~
 
 Bienvenido al bot de inteligencia de fuentes abiertas.
 
-*Comandos disponibles:*
+*Comandos:*
 /username <nombre> → Buscar usuario en redes
 /ip <IP> → Escanear IP
 /numero <número> → Rastrear número
@@ -158,7 +174,6 @@ async def numero_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     resultado = await scan_number(numero)
     await msg.edit_text(resultado, parse_mode='Markdown')
 
-# ================= CALLBACKS =================
 async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -172,8 +187,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == 'help':
         await query.edit_message_text("🤖 *Ayuda*\n\n/username <nombre>\n/ip <IP>\n/numero <número>\n/menu\n/help", parse_mode='Markdown')
 
-# ================= MAIN =================
-def main():
+# ================= MAIN (ejecuta Flask y el bot de Telegram) =================
+def run_bot():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("menu", menu))
@@ -186,4 +201,10 @@ def main():
     app.run_polling()
 
 if __name__ == '__main__':
-    main()
+    # Iniciar servidor Flask en un hilo separado
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.daemon = True
+    flask_thread.start()
+    
+    # Ejecutar el bot en el hilo principal
+    run_bot()
