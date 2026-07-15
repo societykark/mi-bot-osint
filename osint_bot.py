@@ -30,7 +30,7 @@ def health_check():
     return "OK", 200
 
 def run_flask():
-    app_flask.run(host='0.0.0.0', port=3000)
+    app_flask.run(host='0.0.0.0', port=8080)
 
 # ================= FUNCIÓN PARA BUSCAR USUARIO (SHERLOCK) =================
 async def search_username(username: str) -> str:
